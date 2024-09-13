@@ -20,6 +20,14 @@ const ACCEPTED_ORIGINS = [
   'http://localhost:1234'
 ]
 
+app.get('/', (req, res) => {
+  const origin = req.header('origin')
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin){
+    res.header('Access-Control-Allow-Origin', origin)
+  }
+  res.json({message: 'Hola mundo'})
+})
+
 app.get('/movies', (req, res) => {
   const origin = req.header('origin')
   if (ACCEPTED_ORIGINS.includes(origin) || !origin){
