@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
   if (ACCEPTED_ORIGINS.includes(origin) || !origin){
     res.header('Access-Control-Allow-Origin', origin)
   }
-  res.json({message: 'Hola mundo'})
+  res.json({message: 'https://rest-api-deploy-production-e4e2.up.railway.app/movies'})
 })
 
 app.get('/movies', (req, res) => {
