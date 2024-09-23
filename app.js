@@ -2,7 +2,6 @@ const express = require('express')
 const crypto = require('node:crypto')
 const movies = require('./movies.json')
 
-
 const { validateMovie, validatePartialMovie } = require('./schemas/moviesSchema')
 
 const app = express()
@@ -22,22 +21,22 @@ const ACCEPTED_ORIGINS = [
 
 app.get('/', (req, res) => {
   const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin){
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
   }
-  res.json({message: 'https://rest-api-deploy-production-e4e2.up.railway.app/movies'})
+  res.json({ message: 'https://rest-api-deploy-production-e4e2.up.railway.app/movies' })
 })
 
 app.get('/movies', (req, res) => {
   const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin){
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
   }
 
   const { genre } = req.query
   if (genre) {
     const filterMovies = movies.filter(
-      movie => movie.genre.some(g => g.toLocaleLowerCase() == genre.toLocaleLowerCase())
+      movie => movie.genre.some(g => g.toLocaleLowerCase() === genre.toLocaleLowerCase())
     )
     return res.json(filterMovies)
   }
@@ -46,7 +45,7 @@ app.get('/movies', (req, res) => {
 
 app.get('/movies/:id', (req, res) => {
   const { id } = req.params
-  const movie = movies.find(movie => movie.id == id)
+  const movie = movies.find(movie => movie.id === id)
   if (movie) return res.json(movie)
 
   res.status(404).json({ message: 'Movie not found' })
@@ -55,12 +54,12 @@ app.get('/movies/:id', (req, res) => {
 app.post('/movies', (req, res) => {
   const result = validateMovie(req.body)
 
-  if(result.error) {
-    return res.status(400).json({error: JSON.parse(result.error.message) })
+  if (result.error) {
+    return res.status(400).json({ error: JSON.parse(result.error.message) })
   }
 
   const newMovie = {
-    id: crypto.randomUUID(), //UUID v4
+    id: crypto.randomUUID(), // UUID v4
     ...result.data
   }
 
@@ -72,35 +71,34 @@ app.post('/movies', (req, res) => {
 
 app.delete('/movies/:id', (req, res) => {
   const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin){
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
   }
 
   const { id } = req.params
-  const movieIndex = movies.findIndex(movie => movie.id == id)
+  const movieIndex = movies.findIndex(movie => movie.id === id)
 
-  if(movieIndex == -1) {
-    return res.status(404).json({message: 'Movie not found'})
+  if (movieIndex === -1) {
+    return res.status(404).json({ message: 'Movie not found' })
   }
 
   movies.splice(movieIndex, 1)
 
-  return res.json({message: 'Movie deleted'})
+  return res.json({ message: 'Movie deleted' })
 })
 
 app.patch('/movies/:id', (req, res) => {
   const result = validatePartialMovie(req.body)
-  
   if (!result.success) {
-    return res.status(400).json({error: JSON.parse(result.error.message) })
+    return res.status(400).json({ error: JSON.parse(result.error.message) })
   }
 
-  const {id} = req.params
-  const movieIndex = movies.findIndex(movie => movie.id == id)
+  const { id } = req.params
+  const movieIndex = movies.findIndex(movie => movie.id === id)
 
-  if(movieIndex == -1) return res.status(404).json({message: 'Movie not found'})
+  if (movieIndex === -1) return res.status(404).json({ message: 'Movie not found' })
 
-  const updateMovie =  {
+  const updateMovie = {
     ...movies[movieIndex],
     ...result.data
   }
@@ -113,7 +111,7 @@ app.patch('/movies/:id', (req, res) => {
 app.options('/movies/:id', (req, res) => {
   const origin = req.header('origin')
 
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin){
+  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')
   }
